@@ -1,0 +1,122 @@
+[
+  {
+    "file": "find-apple.mp3",
+    "text": "Can you find the apple?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "find-banana.mp3",
+    "text": "Can you find the banana?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "find-strawberry.mp3",
+    "text": "Can you find the strawberry?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "find-orange.mp3",
+    "text": "Can you find the orange?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "find-grapes.mp3",
+    "text": "Can you find the grapes?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "find-watermelon.mp3",
+    "text": "Can you find the watermelon?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "count-bees.mp3",
+    "text": "How many bees can you see?",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "number-1.mp3",
+    "text": "One.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "number-2.mp3",
+    "text": "Two.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "number-3.mp3",
+    "text": "Three.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "number-4.mp3",
+    "text": "Four.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "number-5.mp3",
+    "text": "Five.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "feed-1.mp3",
+    "text": "Let’s give Dino one banana.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "feed-2.mp3",
+    "text": "Let’s give Dino two apples.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "feed-3.mp3",
+    "text": "Let’s give Dino three strawberries.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "picnic-2.mp3",
+    "text": "Let’s put two apples in the basket.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "picnic-3.mp3",
+    "text": "Let’s put three bananas in the basket.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "picnic-4.mp3",
+    "text": "Let’s put four oranges in the basket.",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "lovely-job.mp3",
+    "text": "Lovely job!",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  },
+  {
+    "file": "celebration.mp3",
+    "text": "You did it! What a lovely adventure!",
+    "voice": "en-GB-SoniaNeural",
+    "rate": "-8%"
+  }
+]
