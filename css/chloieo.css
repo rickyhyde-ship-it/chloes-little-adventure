@@ -1,0 +1,25 @@
+.home-buttons{display:flex;justify-content:center;gap:14px;margin:0 auto;max-width:610px}
+.home-buttons .play-button{min-width:0;flex:1;min-height:84px;max-width:280px;font-size:clamp(18px,2.5vw,29px);gap:9px;padding:10px 14px;line-height:1.12;border-radius:25px}
+.home-buttons .play-button svg{width:27px;height:27px;flex-shrink:0}
+.home-buttons .chloieo-button{background:#709d78;border-color:#4c7255;box-shadow:0 6px 0 #4c7255,0 10px 0 #ffffff6b}
+#game[data-theme=platformer] #stickers{display:none}
+#game[data-theme=platformer] #scene{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:max(5px,env(safe-area-inset-bottom))}
+.chloieo{position:relative;width:100%;height:100%;border-radius:22px;overflow:hidden;border:2px solid #bcbf9880;box-shadow:0 3px 0 #9dab8160;background:#e9eedc;user-select:none;-webkit-user-select:none}
+.chloieo canvas{display:block;width:100%;height:100%;touch-action:none}
+.runner-hud{position:absolute;top:8px;left:14px;right:14px;display:flex;align-items:center;gap:12px;pointer-events:none;color:#594b41;font-size:clamp(11px,1.45vw,17px);font-weight:bold}
+.runner-level{background:#fff9e5df;padding:7px 12px;border-radius:20px;white-space:nowrap}
+.runner-rewards{display:flex;align-items:center;gap:6px;background:#fff9e5e8;border-radius:20px;padding:3px 12px}
+.runner-rewards img{width:27px;height:27px}.runner-rewards b{min-width:15px}.runner-rewards img:nth-of-type(2){margin-left:8px}
+.runner-status{margin-left:auto;background:#fff9e5e8;border-radius:20px;padding:7px 12px;color:#77558b;white-space:nowrap}.runner-status:empty{display:none}
+.runner-hint{position:absolute;left:26%;right:18%;bottom:18px;text-align:center;border-radius:15px;padding:8px 10px;color:#5a4c3e;background:#fff6dcdf;font-size:clamp(11px,1.4vw,16px);line-height:1.3;pointer-events:none}
+.runner-controls{position:absolute;left:14px;right:14px;bottom:12px;display:flex;justify-content:space-between;align-items:center;pointer-events:none}
+.direction-controls{display:flex;gap:10px}
+.runner-controls button{width:clamp(72px,9.5vw,95px);height:clamp(72px,18dvh,92px);border-radius:25px;background:#fff6e5ed;border:3px solid #9e8865;box-shadow:0 5px 0 #8a7456;color:#735c42;font-size:clamp(30px,4vw,42px);pointer-events:auto;touch-action:none;padding:0;line-height:1;transition:background .1s}
+.runner-controls .jump-control{width:clamp(82px,11vw,110px);height:clamp(78px,20dvh,102px);font-size:56px;background:#e785a2;border-color:#a35373;box-shadow:0 5px 0 #a35373;color:#fff9e5;border-radius:50%}
+.runner-controls button.held{transform:translateY(4px) scale(.96);box-shadow:0 1px 0 #8a7456;background:#ffecbc}.runner-controls .jump-control.held{background:#d26a8b}
+.runner-overlay{position:absolute;inset:0;background:#f7f1d7b8;backdrop-filter:blur(5px);display:grid;place-items:center;z-index:4}
+.runner-card{width:min(560px,85%);text-align:center;padding:12px 22px;background:#fff9e9;border:3px solid #d7ba85;border-radius:30px;box-shadow:0 7px 0 #b89e74}
+.runner-card h2{font-size:clamp(23px,3.4vw,40px);color:#b95476;margin:4px 0;letter-spacing:-.04em}.runner-card p{font-size:clamp(12px,1.5vw,17px);margin:5px 0 8px}.runner-star{height:42px}.runner-star img{height:100%;width:60px}.runner-result{display:flex;align-items:center;justify-content:center;gap:8px;font-size:20px;font-weight:bold;margin-bottom:10px}.runner-result img{width:26px;height:26px}.runner-card .play-button{min-height:72px;font-size:clamp(19px,2.5vw,27px);min-width:220px;padding:8px 18px}.runner-card .home-text{margin:5px auto 0;min-height:26px}.runner-card .eyebrow{font-size:10px}
+@media(max-height:360px) and (orientation:landscape){.home-copy h1{font-size:35px}.home-copy p{margin-bottom:10px}.home-friends{height:32px;margin-top:13px}.home-buttons .play-button{min-height:72px}.runner-card{padding:7px 16px}.runner-star{display:none}.runner-card p{margin:3px 0}.runner-result{margin-bottom:6px}.runner-card .play-button{min-height:72px}.runner-hud{top:5px}.runner-level{padding:5px 8px}}
+@media(min-height:600px) and (orientation:landscape){.runner-card{padding:28px}.runner-star{height:90px}.runner-card .play-button{min-height:78px}.runner-card p{margin:15px 0}.runner-result{margin:15px 0}.runner-hint{bottom:35px}.runner-controls{bottom:20px;left:24px;right:24px}}
+
