@@ -1,0 +1,9 @@
+# Fishing artwork
+
+`chloe-fishing.webp` is original character artwork generated using the built-in image generation tool, with `assets/reference/chloe_reference.png` as the identity reference. The output retains its transparent alpha and is resized to 960 × 640 for the game. It is served locally and shared by the boat, character portrait, dock and result screen.
+
+Final prompt:
+
+> Use case: identity-preserve. Asset type: transparent character-and-boat illustration for a young child's browser fishing game. Reference image: preserve the young girl Chloe's recognisable face, large brown eyes, straight honey-brown shoulder-length hair with fringe, coral pink hoodie and matching trousers with white heart emblem and white trainers. Create a NEW pose of the same character sitting safely in a small charming coral-pink wooden rowboat, smiling with excitement as she holds a fishing rod in both hands. Side / three-quarter view, boat bow facing right, whole boat and whole girl visible. The rod leans diagonally upward to the right and its tip ends near the upper right; do not draw any fishing line or hook, as those are animated separately by the game. Warm polished storybook game illustration with softly painted shading, crisp readable silhouette, friendly expressive face, matching the supplied character's illustration style. Composition: one isolated boat-and-girl group centred with generous transparent padding, no horizon, no water, no scenery, no other people, no text, no watermark. Boat hull horizontal. Genuinely transparent background, preserve clean alpha around hair, rod, boat and shoes. Intended to be recognisable when displayed at 200 pixels wide.
+
+The twelve sea creatures are original SVG illustrations in `js/fishing/art.js`, with shared silhouettes for the collection book and Canvas renderer. They use the project's existing code-native illustration approach. Fish Orbit's artwork, source code, audio and branding are not included.

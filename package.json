@@ -1,13 +1,14 @@
 {
   "name": "chloes-little-adventure",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "type": "module",
   "private": true,
   "description": "A gentle touch-first preschool adventure with Chloe",
   "scripts": {
-    "test": "node tests/karts-engine.mjs && node tests/karts-ui.cjs && node tests/karts-regressions.mjs && node tests/platformer-engine.mjs && node tests/platformer-traversal.mjs && node tests/platformer-ui.cjs && node tests/game.cjs && node tests/audio.cjs",
+    "test": "node tests/fishing-engine.mjs && node tests/fishing-ui.cjs && node tests/karts-engine.mjs && node tests/karts-ui.cjs && node tests/karts-regressions.mjs && node tests/platformer-engine.mjs && node tests/platformer-traversal.mjs && node tests/platformer-ui.cjs && node tests/game.cjs && node tests/audio.cjs",
     "test:karts": "node tests/karts-engine.mjs && node tests/karts-ui.cjs && node tests/karts-regressions.mjs",
-    "vendor:karts": "node scripts/vendor-karts.mjs"
+    "vendor:karts": "node scripts/vendor-karts.mjs",
+    "test:fishing": "node tests/fishing-engine.mjs && node tests/fishing-ui.cjs"
   },
   "devDependencies": {
     "esbuild": "0.28.2",

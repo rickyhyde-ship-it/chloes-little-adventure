@@ -1,12 +1,30 @@
 # Chloe’s Little Adventure
 
-Three landscape-first games starring Chloe: a gentle preschool Numbers adventure, **Chloieo**, a three-level side-scrolling platformer, and **Chlio Karts**, a scenic kart racer.
+Four landscape-first games starring Chloe: a gentle preschool Numbers adventure, **Chloieo**, a three-level side-scrolling platformer, **Chlio Karts**, a scenic kart racer, and **Chloe’s Fishing Adventure**, a colourful cast-and-upgrade fishing game.
 
 ## Play
 
-Open the [GitHub Pages site](https://rickyhyde-ship-it.github.io/chloes-little-adventure/) on a phone and turn it sideways. Choose **Let's Play Numbers**, **Let's Play Chloieo!**, or **Let's Play Chlio Karts!**. The small speaker button turns sound on or off. In Numbers, tap an activity instruction to hear it again.
+Open the [GitHub Pages site](https://rickyhyde-ship-it.github.io/chloes-little-adventure/) on a phone and turn it sideways. Choose **Let's Play Numbers**, **Let's Play Chloieo!**, **Let's Play Chlio Karts!**, or **Let's Play Fishing!**. The small speaker button turns sound on or off. In Numbers, tap an activity instruction to hear it again.
 
-There are no lives, game-over screens, ads, purchases, accounts, analytics, or input permissions. No microphone, camera, or location APIs are used. Progress stays in memory and resets when the page reloads. Rotating the device pauses all games and preserves progress.
+There are no lives, game-over screens, ads, purchases, accounts, analytics, or input permissions. No microphone, camera, or location APIs are used. Numbers, Chloieo and Karts progress stays in memory and resets when the page reloads. Fishing coins, upgrades, fish discoveries and depth records save locally on the current device. If browser storage is unavailable, fishing still works with in-memory progress. Rotating the device pauses all games and preserves progress.
+
+## Chloe’s Fishing Adventure
+
+Inspired by the timed casting, water bounces, dive taps, hook steering and equipment progression described in [Fish Orbit](https://www.crazygames.com/game/fish-orbit), with original Chloe artwork and sea creatures.
+
+Choose **Let’s fish!**, then tap **Cast now!** when the moving pointer reaches the green centre. Strong timing throws the float further and deeper. The float arcs and skips across the surface before sinking. Tap or hold **Dive** to add downward momentum and extend the dive. It turns around automatically, or tap **Reel up** to return early. Hold **Left** or **Right**, or drag on the water, to steer. Catch sea friends by touching them with the hook **on the way up**. The camera follows the hook, and Chloe remains visible in a boat portrait while exploring the depths.
+
+Desktop: Left/Right arrows or A/D steer; Space or Down casts/dives (holding helps diving); Up or R reels early. Native keyboard activation also works on the visible buttons. Simultaneous touch contacts support steering while diving. Portrait orientation, hidden pages and blur clear held inputs; portrait and hidden pages pause all game time. Home disposes of the canvas loop and listeners.
+
+Every completed cast earns fish coins plus a small exploration reward, even if no fish were found. Spend coins on four eight-level upgrades: **Cast power** throws further, **Dive weight** reaches deeper water, **Water bounce** adds surface skips, and **Gentle line** increases catch capacity from three to eleven. There are no purchases or reward ads.
+
+- **Sunshine Bay:** a warm sunny sea with Pebble Minnows, Sunshine Guppies, Peach Puffers and Little Sea Turtles.
+- **Coral Cove:** a coral sea unlocked after discovering 120 metres, with Candy Clownfish, Lavender Angelfish, Velvet Rays and Golden Seahorses.
+- **Moonlit Sea:** a twilight sea unlocked at 280 metres, with Moon Jellies, Starlight Lanternfish, Pearl Octopuses and Dreamy Baby Whales.
+
+The **Fish book** records all twelve species and the number found. **Places** lets Chloe travel to each unlocked area. New discoveries, coins, purchases and depth records save after completed casts or purchases under `chloe-fishing-v1` in localStorage; incomplete casts do not give rewards. Saved data is validated on loading. A fresh device/browser starts a new collection. Clearing this site's browser storage clears fishing progress.
+
+Chloe’s transparent fishing-and-boat illustration was generated with the built-in image-generation tool from the existing character reference. The asset, exact prompt and provenance are documented in [assets/fishing/README.md](assets/fishing/README.md). The fish are original code-native SVG illustrations used both on the Canvas and in the collection book. The fishing game loads only when selected and makes no third-party runtime requests.
 
 ## Chlio Karts
 
@@ -16,7 +34,7 @@ Choose one of three tracks and one of three speeds before the race: **Gentle**, 
 - **Seashell Coast:** turquoise sea, palm trees, shells, a sailboat and a striped lighthouse, with a winding beach straight.
 - **Starlight Speedway:** colourful ringed planets, a rocket, crystals and a starry sky, with a wider winding straight.
 
-Every closed circuit has two launch ramps, automatic airborne jumps and a genuine vertical loop with continuous road and camera frames through the upside-down section. Two laps make a race. Race alongside Dino, Bunny and Bee, steer towards golden stars, and drive over mint boost pads. Road edges gently keep Chloe on track; bumps slow her slightly without a failure screen. All finishers receive a cheerful celebration, with stars, jumps, loops and race time. Race again or choose another track; Home returns to the three-game menu.
+Every closed circuit has two launch ramps, automatic airborne jumps and a genuine vertical loop with continuous road and camera frames through the upside-down section. Two laps make a race. Race alongside Dino, Bunny and Bee, steer towards golden stars, and drive over mint boost pads. Road edges gently keep Chloe on track; bumps slow her slightly without a failure screen. All finishers receive a cheerful celebration, with stars, jumps, loops and race time. Race again or choose another track; Home returns to the four-game menu.
 
 Orientation changes, hidden tabs and window blur clear held controls. Portrait orientation and hidden tabs pause countdowns, physics, jump motion, rivals and race time. Karts shares the existing music and sound toggle. Returning Home disposes of input listeners, frame loops and GPU resources. A Canvas fallback keeps the driving controls, race simulation and Chloe artwork available if WebGL 2 is unavailable or the graphics context is lost; its scenery is simpler than the 3D renderer.
 
@@ -34,7 +52,7 @@ Collect apples and bananas on the ground and on elevated platforms. Dinosaurs pu
 
 The giant spider patrols its arena and fires aimed webs, adding a two-web spread during the second half of the fight. Web hits briefly slow Chloe and push her back; jumping remains available. Land on its head while descending **ten separate times** to defeat it. Body contact does not count, and the exit remains locked until it is defeated. Nearby stepping platforms provide alternative approaches. The hit counter is always visible during the fight.
 
-Pink checkpoint flags activate as Chloe passes them. Falling into a gap returns her to the last checkpoint without removing collected fruit. Finish flags lead to the next level; after level three, replay resets all Chloieo progress. Home returns to the three-game menu and disposes of the platformer loop and controls. All three games share the gentle music and sound toggle.
+Pink checkpoint flags activate as Chloe passes them. Falling into a gap returns her to the last checkpoint without removing collected fruit. Finish flags lead to the next level; after level three, replay resets all Chloieo progress. Home returns to the four-game menu and disposes of the platformer loop and controls. All four games share the gentle music and sound toggle.
 
 ## Run locally
 
@@ -47,6 +65,7 @@ index.html
 css/game.css
 css/chloieo.css
 css/karts.css
+css/fishing.css
 js/
   game.js             # Scene flow, Pointer Events, transitions
   state.js           # Session state and shuffle
@@ -71,8 +90,15 @@ js/
     render.js         # Local Three.js scenery and Canvas fallback
     scenery.js        # Whole-circuit clearance for decorative assets
     game.js           # Track/speed picker, touch controls and lifecycle
+  fishing/
+    data.js           # Areas, species, upgrades and validated local saves
+    engine.js         # Cast arcs, skips, dive impulses, steering and catches
+    art.js            # Original sea-creature SVG illustrations
+    render.js         # Canvas ocean, underwater camera, boat and hook
+    game.js           # Dock, collection, controls, results and lifecycle
   vendor/             # Bundled Three.js and MIT license
 assets/
+  fishing/chloe-fishing.webp
   karts/chloe-kart.png
   reference/chloe_reference.png
   chloe/chloe-poses.webp
@@ -83,6 +109,8 @@ assets/
   audio/little-wonder.mp3
   audio/voice/*.mp3
   audio/voice/transcript.json
+tests/fishing-engine.mjs
+tests/fishing-ui.cjs
 tests/game.cjs
 tests/audio.cjs
 tests/platformer-engine.mjs
@@ -107,7 +135,7 @@ Optional future polish: painted replacements for the SVG scenery and props. Real
 
 ## Verification
 
-With the local server running, install development dependencies using `npm install`, then run `npm test` for all three games or `npm run test:karts` for the racer. Tests expect Microsoft Edge by default; set `BROWSER_CHANNEL=chromium` to use Playwright’s Chromium (install it with `npx playwright install chromium`). Karts serves its checked-in Three.js files directly; no package installation is needed for deployment.
+With the local server running, install development dependencies using `npm install`, then run `npm test` for all four games or `npm run test:karts` / `npm run test:fishing` for the individual games. Tests expect Microsoft Edge by default; set `BROWSER_CHANNEL=chromium` to use Playwright’s Chromium (install it with `npx playwright install chromium`). Karts serves its checked-in Three.js files directly; no package installation is needed for deployment.
 
 The browser tests cover all twelve rounds, wrong choices, counting, replay, home during transitions, secondary pointers, repeated taps, sound toggles, portrait pause/resume, and bounds/target sizes at 844×390, 852×393, 915×412, 1024×768, and 667×375. Audio checks verify every prompt has a decodable clip, music ducking and recovery, overlapping-voice cancellation, no autoplay, independent orientation/tab pauses, and mute/home behavior. Tests check for runtime errors and page scrolling. Screenshots go into the ignored `work` directory.
 
@@ -118,6 +146,8 @@ Karts engine tests complete nine races from the starting line (all track/speed c
 Scenery placements reserve the full footprint of every hill, tree group, crystal group and planet against the entire circuit. Large hills stay outside the circuit. Regression tests check rendered steering direction on straights, bends and loops, in forward and reverse, and raycast the actual scenery meshes across all lanes and the camera clearance. Versioned game entry points refresh changed driving modules after a deployment.
 
 The checked-in renderer subset can be regenerated after `npm ci` with `npm run vendor:karts`. This maintenance command bundles the pinned Three.js dependency and retains its license; ordinary editing and deployment do not require it.
+
+Fishing tests verify timed cast quality, realistic surface skips, all four upgrade effects, dive impulses, catch capacity, single-award protection, all three full input-driven voyages, all twelve reachable species, unlocks, saved/corrupt/unavailable storage, genuine simultaneous touch input, drag and keyboard steering, pause/resume, six landscape sizes, purchases, reload persistence, all three area renderers and transitions to the existing games.
 
 ## Publish
 

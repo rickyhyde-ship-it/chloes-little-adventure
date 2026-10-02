@@ -20,7 +20,7 @@ const sizes=[[844,390],[852,393],[915,412],[1024,768],[667,375],[568,320]];
     }
     await page.setViewportSize({width:844,height:390});
   }
-  await layout('.home-buttons button','three-game menu',72);
+  await layout('.home-buttons button','four-game menu',72);
   await page.locator('[data-action=karts]').tap();await page.locator('[data-kart-start]').waitFor();
   assert.equal(await page.locator('[data-kart-track]').count(),3);assert.equal(await page.locator('[data-kart-speed]').count(),3);
   await layout('[data-kart-track],[data-kart-speed],[data-kart-start]','track picker');
@@ -74,5 +74,5 @@ const sizes=[[844,390],[852,393],[915,412],[1024,768],[667,375],[568,320]];
   await page.locator('[data-action=play]').tap();assert.equal(await page.locator('.fruit-choice').count(),3);await page.locator('#home').tap();
   await page.locator('[data-action=chloieo]').tap();assert.equal(await page.locator('[data-control=jump]').count(),1);await page.locator('#home').tap();
   await page.locator('[data-action=karts]').tap();await page.locator('[data-kart-start]').waitFor();assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);
-  console.log(JSON.stringify({result:'PASS',checks:['Three-game menu','Three tracks and speeds','WebGL scenery','Exactly three driving buttons','Real simultaneous steer and brake','Brake and reverse','Keyboard','Orientation/tab pauses','All track camera positions','Finish/replay/track selection','Context loss fallback','Lifecycle and both original games','No runtime or asset errors'],layouts},null,2));await browser.close();
+  console.log(JSON.stringify({result:'PASS',checks:['Four-game menu','Three tracks and speeds','WebGL scenery','Exactly three driving buttons','Real simultaneous steer and brake','Brake and reverse','Keyboard','Orientation/tab pauses','All track camera positions','Finish/replay/track selection','Context loss fallback','Lifecycle and both original games','No runtime or asset errors'],layouts},null,2));await browser.close();
 })().catch(e=>{console.error(e);process.exit(1);});

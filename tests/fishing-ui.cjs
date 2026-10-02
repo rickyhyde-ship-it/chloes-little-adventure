@@ -1,0 +1,48 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const {chromium}=require('playwright');
+fs.mkdirSync('work',{recursive:true});
+(async()=>{
+  const browser=await chromium.launch({headless:true,channel:process.env.BROWSER_CHANNEL==='chromium'?undefined:(process.env.BROWSER_CHANNEL||'msedge')});
+  try {
+    const page=await browser.newPage({viewport:{width:844,height:390},hasTouch:true}),errors=[],failed=[];
+    page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
+    await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173/',{waitUntil:'networkidle'});
+    assert.equal(await page.locator('.home-buttons button').count(),4);
+    const layouts=[],sizes=[[844,390],[852,393],[915,412],[1024,768],[667,375],[568,320]];
+    async function layout(selector,label,min=48){for(const [width,height] of sizes){await page.setViewportSize({width,height});await page.waitForTimeout(60);const data=await page.evaluate(selector=>({sw:document.documentElement.scrollWidth,sh:document.documentElement.scrollHeight,targets:[...document.querySelectorAll(selector)].filter(e=>e.getClientRects().length).map(e=>{const r=e.getBoundingClientRect();return {label:e.textContent,x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};})}),selector);assert.equal(data.sw,width);assert.equal(data.sh,height);for(const b of data.targets){assert.ok(b.height>=min-1&&b.width>=min-1,`${label}: target too small ${JSON.stringify(b)}`);assert.ok(b.x>=0&&b.y>=0&&b.right<=width+1&&b.bottom<=height+1,`${label}: cropped target at ${width}x${height}: ${JSON.stringify(b)}`);}layouts.push(`${label} ${width}x${height}`);}await page.setViewportSize({width:844,height:390});}
+    await layout('.home-buttons button','four-game menu',72);await page.screenshot({path:'work/fishing-home.png'});
+    async function enter(){await page.locator('[data-action=fishing]').tap();await page.locator('[data-fish-start]').waitFor();await page.evaluate(async()=>window.fishingGame=(await import(document.querySelector('script[type=module]').src)).runner);await page.waitForFunction(()=>fishingGame.renderer.chloe.complete&&fishingGame.renderer.chloe.naturalWidth>0);}
+    await enter();assert.equal(await page.locator('[data-fish-upgrade]:disabled').count(),4);
+    await layout('[data-fish-start]','fishing dock');await page.screenshot({path:'work/fishing-dock.png'});
+    await page.locator('[data-fish-tab=book]').tap();assert.equal(await page.locator('.fish-book-card').count(),12);
+    await page.locator('[data-fish-tab=places]').tap();assert.equal(await page.locator('[data-fish-zone]').count(),3);assert.equal(await page.locator('[data-fish-zone]:disabled').count(),2);
+    await page.locator('[data-fish-tab=gear]').tap();await page.locator('[data-fish-start]').tap();assert.equal(await page.evaluate(()=>fishingGame.world.status),'aim');
+    const meter=await page.evaluate(()=>fishingGame.world.meter);await page.waitForTimeout(200);assert.notEqual(await page.evaluate(()=>fishingGame.world.meter),meter);
+    await page.screenshot({path:'work/fishing-cast.png'});await layout('[data-fish-control],[data-fish-action]','cast controls');
+    await page.locator('[data-fish-action]').tap();assert.equal(await page.evaluate(()=>fishingGame.world.status),'flight');await page.waitForFunction(()=>fishingGame.world.status==='dive');
+    const cdp=await page.context().newCDPSession(page),left=await page.locator('[data-fish-control=left]').boundingBox(),dive=await page.locator('[data-fish-action]').boundingBox(),x=await page.evaluate(()=>fishingGame.world.hook.x),limit=await page.evaluate(()=>fishingGame.world.depthLimit);
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:left.x+left.width/2,y:left.y+left.height/2,id:1},{x:dive.x+dive.width/2,y:dive.y+dive.height/2,id:2}]});await page.waitForTimeout(550);assert.ok(await page.evaluate(()=>fishingGame.input.left&&fishingGame.input.action));assert.ok(await page.evaluate(()=>fishingGame.world.hook.x)<x-40);assert.ok(await page.evaluate(()=>fishingGame.world.depthLimit)>limit);await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});assert.equal(await page.evaluate(()=>fishingGame.input.left),false);
+    await page.screenshot({path:'work/fishing-dive.png'});
+    await layout('[data-fish-control],[data-fish-action],[data-fish-reel]','underwater controls');
+    const canvas=await page.locator('.fishing canvas').boundingBox(),dragFrom=await page.evaluate(()=>fishingGame.world.hook.x);await page.mouse.move(canvas.x+canvas.width*.83,canvas.y+canvas.height*.48);await page.mouse.down();await page.waitForTimeout(300);await page.mouse.up();assert.ok(await page.evaluate(()=>fishingGame.world.hook.x)>dragFrom);
+    // Portrait and hidden-page pauses preserve both physics and the power bar.
+    await page.setViewportSize({width:390,height:844});await page.waitForTimeout(60);const paused=await page.evaluate(()=>({t:fishingGame.world.time,y:fishingGame.world.hook.y}));await page.waitForTimeout(300);assert.deepEqual(await page.evaluate(()=>({t:fishingGame.world.time,y:fishingGame.world.hook.y})),paused);assert.equal(await page.locator('#orientation').isVisible(),true);await page.setViewportSize({width:844,height:390});
+    await page.evaluate(()=>{Object.defineProperty(document,'hidden',{configurable:true,get:()=>true});document.dispatchEvent(new Event('visibilitychange'));});await page.waitForTimeout(50);const hiddenTime=await page.evaluate(()=>fishingGame.world.time);await page.waitForTimeout(200);assert.equal(await page.evaluate(()=>fishingGame.world.time),hiddenTime);await page.evaluate(()=>{delete document.hidden;document.dispatchEvent(new Event('visibilitychange'));});
+    const keyboardX=await page.evaluate(()=>fishingGame.world.hook.x);await page.keyboard.down('ArrowRight');await page.waitForTimeout(200);await page.keyboard.up('ArrowRight');assert.ok(await page.evaluate(()=>fishingGame.world.hook.x)>keyboardX);
+    // Set up a catch encounter; engine tests cover full input-driven voyages.
+    await page.evaluate(()=>{const g=fishingGame,w=g.world;g.clearInput();w.status='dive';w.hook.y=200;w.depth=125;w.fish=w.fish.slice(0,3);w.fish.forEach((f,i)=>{f.x=w.hook.x;f.y=170-i*25;f.baseY=f.y;f.speed=0;f.caught=false;});});
+    await page.locator('[data-fish-reel]').tap();await page.waitForFunction(()=>fishingGame.world.status==='result');assert.ok(await page.evaluate(()=>fishingGame.world.caught.length)>0);assert.ok(await page.locator('.fish-catch-list img').count()>0);assert.ok(await page.evaluate(()=>JSON.parse(localStorage.getItem('chloe-fishing-v1')).casts===1));
+    await layout('[data-fish-start],[data-fish-dock]','catch results');await page.screenshot({path:'work/fishing-result.png'});
+    await page.locator('[data-fish-dock]').tap();const before=await page.evaluate(()=>fishingGame.world.progress.coins);await page.locator('[data-fish-upgrade=strength]').tap();assert.equal(await page.evaluate(()=>fishingGame.world.progress.upgrades.strength),1);assert.equal(await page.evaluate(()=>fishingGame.world.progress.coins),before-15);
+    await page.locator('[data-fish-tab=places]').tap();await page.locator('[data-fish-zone="1"]').tap();assert.equal(await page.evaluate(()=>fishingGame.world.zoneIndex),1);
+    await page.locator('[data-fish-start]').tap();await page.locator('[data-fish-action]').tap();await page.waitForFunction(()=>fishingGame.world.status==='dive');await page.screenshot({path:'work/fishing-coral.png'});
+    await page.locator('#home').tap();assert.equal(await page.locator('.home-buttons button').count(),4);assert.equal(await page.evaluate(async()=>(await import(document.querySelector('script[type=module]').src)).runner),null);
+    await enter();assert.equal(await page.evaluate(()=>fishingGame.world.progress.upgrades.strength),1);assert.equal(await page.evaluate(()=>fishingGame.world.progress.casts),1);await page.locator('[data-fish-tab=book]').tap();assert.ok(await page.locator('.fish-book-card.found').count()>0);
+    // All three environments render, including the deepest sea creatures.
+    await page.evaluate(()=>{fishingGame.world.progress.record=400;fishingGame.tab='places';fishingGame.dock();});await page.locator('[data-fish-zone="2"]').tap();await page.locator('[data-fish-start]').tap();await page.locator('[data-fish-action]').tap();await page.waitForFunction(()=>fishingGame.world.status==='dive');await page.screenshot({path:'work/fishing-moon.png'});await page.locator('#home').tap();
+    await page.reload();await enter();assert.equal(await page.evaluate(()=>fishingGame.world.progress.casts),1);assert.equal(await page.evaluate(()=>fishingGame.world.progress.upgrades.strength),1);await page.locator('#home').tap();
+    for(const game of ['karts','chloieo','play']){await page.locator(`[data-action=${game}]`).tap();await page.locator(game==='karts'?'[data-kart-start]':game==='chloieo'?'[data-control=jump]':'.fruit-choice').first().waitFor();await page.locator('#home').tap();}
+    assert.deepEqual(errors,[]);assert.deepEqual(failed,[]);console.log(JSON.stringify({result:'PASS',checks:['Four-game menu','Original Chloe fishing artwork loaded','Timed cast and actual dive','Real simultaneous steering and dive touches','Canvas drag and keyboard steering','Portrait and hidden-page pauses','Caught fish, coins and collection','Working gear purchases and area unlocks','Save across Home and reload','Three rendered fishing areas','Both arcade games and Numbers preserved','No runtime errors or failed assets'],layouts},null,2));
+  }finally{await browser.close();}
+})().catch(e=>{console.error(e);process.exit(1);});
