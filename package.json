@@ -1,9 +1,17 @@
 {
   "name": "chloes-little-adventure",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "type": "module",
   "private": true,
   "description": "A gentle touch-first preschool adventure with Chloe",
-  "scripts": { "test": "node tests/platformer-engine.mjs && node tests/platformer-traversal.mjs && node tests/platformer-ui.cjs && node tests/game.cjs && node tests/audio.cjs" },
-  "devDependencies": { "playwright": "1.62.1" }
+  "scripts": {
+    "test": "node tests/karts-engine.mjs && node tests/karts-ui.cjs && node tests/platformer-engine.mjs && node tests/platformer-traversal.mjs && node tests/platformer-ui.cjs && node tests/game.cjs && node tests/audio.cjs",
+    "test:karts": "node tests/karts-engine.mjs && node tests/karts-ui.cjs",
+    "vendor:karts": "node scripts/vendor-karts.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.62.1",
+    "three": "0.186.1"
+  }
 }

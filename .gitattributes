@@ -1,0 +1,2 @@
+# GLSL template strings in the generated upstream bundle preserve whitespace.
+js/vendor/three.js -whitespace linguist-generated=true
