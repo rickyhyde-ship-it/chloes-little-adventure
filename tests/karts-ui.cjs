@@ -8,7 +8,7 @@ const sizes=[[844,390],[852,393],[915,412],[1024,768],[667,375],[568,320]];
   const page=await browser.newPage({viewport:{width:844,height:390},hasTouch:true});const errors=[],failed=[];
   page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)failed.push(`${r.status()} ${r.url()}`);});
   await page.goto(process.env.GAME_URL||'http://127.0.0.1:4173/',{waitUntil:'networkidle'});
-  await page.evaluate(async()=>{window.gameModule=await import(new URL('js/game.js',location.href));window.audioModule=await import(new URL('js/audio.js',location.href));});
+  await page.evaluate(async()=>{window.gameModule=await import(document.querySelector('script[type=module]').src);window.audioModule=await import(new URL('js/audio.js',location.href));});
   const layouts=[];
   async function layout(selector,label,min=44){
     for(const [width,height] of sizes){

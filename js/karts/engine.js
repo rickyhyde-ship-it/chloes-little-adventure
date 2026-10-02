@@ -42,7 +42,8 @@ export class KartWorld {
     } else {this.brakeHeld=0;this.speed=approach(this.speed,cruise*(this.boost>0?1.32:1),15*dt);}
     const direction=(input.right?1:0)-(input.left?1:0);
     this.steer=approach(this.steer,direction,7*dt);
-    this.lane=clamp(this.lane+this.steer*8*dt*(this.speed<0?-1:1),-7.3,7.3);
+    // These are child-friendly lane controls: Left remains left in reverse.
+    this.lane=clamp(this.lane+this.steer*8*dt,-7.3,7.3);
     this.distance=Math.max(-25,this.distance+this.speed*dt);this.furthest=Math.max(this.furthest,this.distance);
     for(const feature of this.track.features) {
       if(feature.type==='jump'&&crossed(previous,this.distance,feature.launch,this.track.length)&&this.jumpHeight===0) {

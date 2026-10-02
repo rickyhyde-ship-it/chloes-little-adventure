@@ -10,7 +10,7 @@ There are no lives, game-over screens, ads, purchases, accounts, analytics, or i
 
 ## Chlio Karts
 
-Choose one of three tracks and one of three speeds before the race: **Gentle**, **Cruise**, or **Zoom**. Chloe accelerates and follows the road automatically. There are exactly three driving buttons: hold **Left** or **Right** to steer, or hold **Brake** to slow down. Keeping Brake held after stopping engages reverse; releasing it accelerates forward again. Simultaneous touch contacts work for steering while braking. Desktop controls: Left/Right arrows or A/D to steer; Down, S, or Space to brake/reverse.
+Choose one of three tracks and one of three speeds before the race: **Gentle**, **Cruise**, or **Zoom**. Chloe accelerates and follows the road automatically. There are exactly three driving buttons: hold **Left** or **Right** to move in that direction on screen, or hold **Brake** to slow down. Keeping Brake held after stopping engages reverse; releasing it accelerates forward again. Left and Right keep the same screen direction while reversing. Simultaneous touch contacts work for steering while braking. Desktop controls: Left/Right arrows or A/D to steer; Down, S, or Space to brake/reverse.
 
 - **Blossom Meadow:** apple and blossom trees, a river and waterfall, rolling hills, and a rainbow loop.
 - **Seashell Coast:** turquoise sea, palm trees, shells, a sailboat and a striped lighthouse, with a winding beach straight.
@@ -69,6 +69,7 @@ js/
     tracks.js         # Three closed circuits, road frames, ramps and loops
     engine.js         # Deterministic driving, rivals, stars, jumps and laps
     render.js         # Local Three.js scenery and Canvas fallback
+    scenery.js        # Whole-circuit clearance for decorative assets
     game.js           # Track/speed picker, touch controls and lifecycle
   vendor/             # Bundled Three.js and MIT license
 assets/
@@ -89,6 +90,7 @@ tests/platformer-traversal.mjs
 tests/platformer-ui.cjs
 tests/karts-engine.mjs
 tests/karts-ui.cjs
+tests/karts-regressions.mjs
 ```
 
 ## Artwork and audio
@@ -112,6 +114,8 @@ The browser tests cover all twelve rounds, wrong choices, counting, replay, home
 Chloieo tests cover collision physics, elevated fruit, dinosaur escape, bee oscillation, ten-second shrinking, the half-height jump trajectory, checkpoint retention, webs, boss gating, and ten distinct stomps. A deterministic traversal completes all three levels with movement/jump inputs from their starting positions, without teleporting. Browser tests exercise genuine simultaneous touch contacts, six landscape sizes (including 568×320), paused timers, level/replay UI, disposal, and returning to Numbers. Browser transition tests set up encounter states; physics and full traversal tests cover reaching those outcomes.
 
 Karts engine tests complete nine races from the starting line (all track/speed combinations) with braking, reverse and steering inputs. They check closed tracks, upside-down loop normals, airborne jumps, safe road edges, forward recovery, one-time stars, reverse lap protection and finish stability. Browser tests cover actual simultaneous touches, keyboard input, six landscape sizes including 568×320, orientation/hidden-tab pauses, all three track renderers, Chloe's visibility during loops, replay and track selection, graphics-context loss fallback, Home cleanup, and both original games. Asset requests and runtime errors are checked. Real iOS/Android device checks remain useful beyond desktop Edge touch emulation.
+
+Scenery placements reserve the full footprint of every hill, tree group, crystal group and planet against the entire circuit. Large hills stay outside the circuit. Regression tests check rendered steering direction on straights, bends and loops, in forward and reverse, and raycast the actual scenery meshes across all lanes and the camera clearance. Versioned game entry points refresh changed driving modules after a deployment.
 
 The checked-in renderer subset can be regenerated after `npm ci` with `npm run vendor:karts`. This maintenance command bundles the pinned Three.js dependency and retains its license; ordinary editing and deployment do not require it.
 

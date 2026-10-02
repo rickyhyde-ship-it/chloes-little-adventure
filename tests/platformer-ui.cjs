@@ -8,7 +8,7 @@ const {chromium}=require('playwright');
  assert.equal(await p.locator('[data-action=play]').textContent(),"Let's Play Numbers");
  assert.equal(await p.locator('[data-action=chloieo]').textContent(),"Let's Play Chloieo!");
  await p.locator('[data-action=chloieo]').tap();
- await p.evaluate(async()=>{window.gameModule=await import(new URL('js/game.js',location.href));window.audioModule=await import(new URL('js/audio.js',location.href));});
+ await p.evaluate(async()=>{window.gameModule=await import(document.querySelector('script[type=module]').src);window.audioModule=await import(new URL('js/audio.js',location.href));});
  const cdp=await p.context().newCDPSession(p);
  const right=await p.locator('[data-control=right]').boundingBox(),jump=await p.locator('[data-control=jump]').boundingBox();
  const r={x:right.x+right.width/2,y:right.y+right.height/2,id:1},j={x:jump.x+jump.width/2,y:jump.y+jump.height/2,id:2};

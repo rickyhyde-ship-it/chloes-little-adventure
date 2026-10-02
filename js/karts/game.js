@@ -1,6 +1,6 @@
-import { KartWorld } from './engine.js';
+import { KartWorld } from './engine.js?v=3.0.1';
 import { TRACKS, SPEEDS } from './tracks.js';
-import { KartRenderer, CanvasKartRenderer } from './render.js';
+import { KartRenderer, CanvasKartRenderer } from './render.js?v=3.0.1';
 import { audio } from '../audio.js';
 
 function trackPicture(track,index) {

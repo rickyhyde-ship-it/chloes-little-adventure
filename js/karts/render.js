@@ -1,12 +1,16 @@
 import * as T from '../vendor/three.js';
 import { sampleTrack, add, mul } from './tracks.js';
+import { sceneryAnchor } from './scenery.js';
 const v=a=>new T.Vector3(...a);
 const basis=s=>new T.Matrix4().makeBasis(v(s.right),v(s.up),v(s.forward));
 const local=(s,x,y,z=0)=>add(add(add(s.p,mul(s.right,x)),mul(s.up,y)),mul(s.forward,z));
+// A +Z-facing road frame has +X on the chase camera's left. Physics lanes
+// use the child's screen direction, so positive lanes must negate that axis.
+const lanePosition=(s,lane,y,z=0)=>local(s,-lane,y,z);
 
 export class KartRenderer {
   constructor(canvas,world) {
-    this.canvas=canvas;this.world=world;this.textures=new Set();this.materials=new Map();this.geometries=new Map();this.batches=new Map();
+    this.canvas=canvas;this.world=world;this.textures=new Set();this.materials=new Map();this.geometries=new Map();this.batches=new Map();this.sceneryBounds=[];
     this.renderer=new T.WebGLRenderer({canvas,antialias:true,powerPreference:'low-power'});
     this.renderer.setPixelRatio(Math.min(devicePixelRatio||1,1.5));
     this.scene=new T.Scene();this.scene.background=new T.Color(world.track.sky);
@@ -14,7 +18,7 @@ export class KartRenderer {
     this.camera=new T.PerspectiveCamera(62,1,.3,1000);
     this.scene.add(new T.HemisphereLight('#fff8e8',world.track.ground,2.3));
     const sun=new T.DirectionalLight('#fff0dc',2);sun.position.set(-90,140,70);this.scene.add(sun);
-    this.buildRoad();this.buildScenery();this.buildProps();this.flushBatches();
+    this.buildRoad();this.buildingScenery=true;this.buildScenery();this.buildingScenery=false;this.buildProps();this.flushBatches();
     this.rivals=world.rivals.map((r,i)=>this.makeRival(r,i));
     const texture=new T.TextureLoader().load(new URL('../../assets/karts/chloe-kart.png',import.meta.url).href);
     texture.colorSpace=T.SRGBColorSpace;this.textures.add(texture);
@@ -33,9 +37,9 @@ export class KartRenderer {
   primitive(kind,color,pos,scale,rotation=null,parent=null) {
     const matrix=new T.Matrix4().compose(v(pos),rotation||new T.Quaternion(),v(scale));
     if(parent){const mesh=new T.Mesh(this.geometry(kind),this.material(color));mesh.applyMatrix4(matrix);parent.add(mesh);return mesh;}
-    const key=`${kind}:${color}`;if(!this.batches.has(key))this.batches.set(key,{kind,color,matrices:[]});this.batches.get(key).matrices.push(matrix);
+    const key=`${this.buildingScenery?'scenery':'prop'}:${kind}:${color}`;if(!this.batches.has(key))this.batches.set(key,{kind,color,matrices:[],scenery:!!this.buildingScenery});this.batches.get(key).matrices.push(matrix);
   }
-  flushBatches(){for(const b of this.batches.values()){const mesh=new T.InstancedMesh(this.geometry(b.kind),this.material(b.color),b.matrices.length);b.matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));this.scene.add(mesh);}this.batches.clear();}
+  flushBatches(){for(const b of this.batches.values()){const mesh=new T.InstancedMesh(this.geometry(b.kind),this.material(b.color),b.matrices.length);mesh.userData.scenery=b.scenery;b.matrices.forEach((m,i)=>mesh.setMatrixAt(i,m));this.scene.add(mesh);}this.batches.clear();}
   buildRoad() {
     const track=this.world.track,positions=[],colors=[],indices=[];
     const push=(a,color)=>{positions.push(...a);colors.push(...new T.Color(color).toArray());};
@@ -60,9 +64,13 @@ export class KartRenderer {
     }
     for(const pad of track.boosts) {
       const s=sampleTrack(track,pad.d),q=new T.Quaternion().setFromRotationMatrix(basis(s));
-      this.primitive('box','#72d9cc',local(s,pad.lane,.09),[5.4,.1,8],q);
-      for(let i=0;i<3;i++)this.primitive('box','#fff7c3',local(s,pad.lane,.16,-2+i*2),[3,.08,.5],q);
+      this.primitive('box','#72d9cc',lanePosition(s,pad.lane,.09),[5.4,.1,8],q);
+      for(let i=0;i<3;i++)this.primitive('box','#fff7c3',lanePosition(s,pad.lane,.16,-2+i*2),[3,.08,.5],q);
     }
+  }
+  sceneryAnchor(position,radius,background=false) {
+    const p=sceneryAnchor(this.world.track,position,radius,{background});
+    this.sceneryBounds.push({position:p,radius,background});return p;
   }
   buildScenery() {
     const track=this.world.track;
@@ -78,18 +86,20 @@ export class KartRenderer {
       this.primitive('cone','#fff9e4',[-130,12,170],[.4,10,7]);
     } else if(track.id==='meadow') {
       this.primitive('box','#7dcbd9',[100,.02,170],[56,.3,140]);
-      this.primitive('box','#bedfe3',[115,14,155],[20,28,7]);
-      this.primitive('sphere','#849991',[115,8,149],[27,16,19]);
-      this.primitive('box','#b9f0f1',[115,20,165],[12,38,1.5]);
-      this.primitive('sphere','#e7faf0',[115,1,170],[17,1,6]);
+      const p=this.sceneryAnchor([115,0,155],36);
+      this.primitive('box','#bedfe3',add(p,[0,14,0]),[20,28,7]);
+      this.primitive('sphere','#849991',add(p,[0,8,-6]),[27,16,19]);
+      this.primitive('box','#b9f0f1',add(p,[0,20,10]),[12,38,1.5]);
+      this.primitive('sphere','#e7faf0',add(p,[0,1,15]),[17,1,6]);
     } else {
       for(let i=0;i<5;i++) {
         const x=[-95,260,-70,215,120][i],z=i*105;
-        this.primitive('sphere',['#e5a2bb','#90cad9','#efc085','#ad9fd9','#8ed6bd'][i],[x,65+i%2*32,z],[15+i*2,15+i*2,15+i*2]);
+        const p=this.sceneryAnchor([x,65+i%2*32,z],i%2===0?35+i*2:15+i*2);
+        this.primitive('sphere',['#e5a2bb','#90cad9','#efc085','#ad9fd9','#8ed6bd'][i],p,[15+i*2,15+i*2,15+i*2]);
         const q=new T.Quaternion().setFromEuler(new T.Euler(1.1,.3,.4));
-        if(i%2===0)this.primitive('ring','#e6cfed',[x,65+i%2*32,z],[30+i*2,30+i*2,30+i*2],q);
+        if(i%2===0)this.primitive('ring','#e6cfed',p,[30+i*2,30+i*2,30+i*2],q);
       }
-      for(let i=0;i<100;i++)this.primitive('crystal','#fff0b2',[Math.sin(i*12.3)*350,60+(i*19)%180,Math.cos(i*7.2)*430+200],[.6,.6,.6]);
+      for(let i=0;i<100;i++)this.primitive('crystal','#fff0b2',this.sceneryAnchor([Math.sin(i*12.3)*350,60+(i*19)%180,Math.cos(i*7.2)*430+200],1),[.6,.6,.6]);
       this.primitive('cylinder','#eee8ed',[-32,9,60],[4,18,4]);this.primitive('cone','#ef94b8',[-32,21,60],[4,4,4]);
       this.primitive('sphere','#70d5e3',[-32,13,64],[1.6,1.6,.4]);
       for(const x of [-38,-26])this.primitive('cone','#ac8ada',[x,3,60],[3,6,3]);
@@ -97,8 +107,8 @@ export class KartRenderer {
     for(let i=0;i<105;i++) {
       const d=i*track.length/105,s=sampleTrack(track,d);
       if(s.kind==='loop'||s.p[1]>6)continue;
-      const side=i%2?1:-1,x=side*(20+(i*17%23)),p=local(s,x,0),scale=2.5+(i%4)*.65;
-      p[1]=0;
+      const side=i%2?1:-1,x=side*(20+(i*17%23)),scale=2.5+(i%4)*.65,original=local(s,x,0);
+      original[1]=0;const p=this.sceneryAnchor(original,scale*3+5);
       if(track.id==='meadow') {
         this.primitive('cylinder','#b28e69',add(p,[0,scale*1.4,0]),[.65,scale*3,.65]);
         this.primitive('sphere',i%3?'#5d9c6a':'#edb5c8',add(p,[0,scale*3.7,0]),[scale*1.8,scale*1.8,scale*1.8]);
@@ -115,8 +125,12 @@ export class KartRenderer {
     }
     for(let i=0;i<14;i++) {
       const x=Math.sin(i*9.1)*350,z=Math.cos(i*7)*350+160;
-      this.primitive('sphere',track.id==='space'?'#666287':track.id==='coast'?'#9bcbbc':'#80b37d',[x,-8,z],[60+i%3*25,20+i%4*8,70]);
-      if(track.id!=='space')for(let k=0;k<3;k++)this.primitive('sphere','#f9ffff',[x+k*7,76+i%4*8,z],[14,4,7]);
+      const radius=Math.max(60+i%3*25,70),p=this.sceneryAnchor([x,-8,z],radius,true);
+      this.primitive('sphere',track.id==='space'?'#666287':track.id==='coast'?'#9bcbbc':'#80b37d',p,[60+i%3*25,20+i%4*8,70]);
+      if(track.id!=='space'){
+        const cloud=this.sceneryAnchor([x+7,76+i%4*8,z],30);
+        for(let k=0;k<3;k++)this.primitive('sphere','#f9ffff',add(cloud,[(k-1)*7,0,0]),[14,4,7]);
+      }
     }
   }
   buildProps() {
@@ -150,15 +164,15 @@ export class KartRenderer {
     // tangent alone puts the camera through the road at the top of a loop.
     const loop=w.loopProgress,loopBlend=loop===null?0:Math.min(1,loop*8,(1-loop)*8);
     const behind=sampleTrack(w.track,w.distance-16-8*loopBlend);
-    const position=v(local(behind,w.lane*.65,7.4+w.jumpHeight*.45));
+    const position=v(lanePosition(behind,w.lane*.65,7.4+w.jumpHeight*.45));
     this.camera.position.copy(position);this.camera.up.copy(v(s.up));
-    this.camera.lookAt(v(local(s,w.lane*.8,6+w.jumpHeight*.6)));
-    this.chloe.position.copy(v(local(s,w.lane,2.5+w.jumpHeight)));this.chloe.quaternion.copy(this.camera.quaternion);
+    this.camera.lookAt(v(lanePosition(s,w.lane*.8,6+w.jumpHeight*.6)));
+    this.chloe.position.copy(v(lanePosition(s,w.lane,2.5+w.jumpHeight)));this.chloe.quaternion.copy(this.camera.quaternion);
     this.chloe.rotateZ(-w.steer*.065);
-    w.rivals.forEach((r,i)=>{const frame=sampleTrack(w.track,r.distance);this.rivals[i].position.copy(v(local(frame,r.lane,.05)));this.rivals[i].quaternion.setFromRotationMatrix(basis(frame));});
+    w.rivals.forEach((r,i)=>{const frame=sampleTrack(w.track,r.distance);this.rivals[i].position.copy(v(lanePosition(frame,r.lane,.05)));this.rivals[i].quaternion.setFromRotationMatrix(basis(frame));});
     const matrix=new T.Matrix4();w.track.stars.forEach((star,i)=>{
       const frame=sampleTrack(w.track,star.d),scale=w.starCollected(star)?0:1;
-      matrix.compose(v(local(frame,star.lane,2+Math.sin(w.time*2+i)*.25)),new T.Quaternion().setFromEuler(new T.Euler(0,w.time,Math.PI/4)),new T.Vector3(scale,scale,scale));this.starMesh.setMatrixAt(i,matrix);
+      matrix.compose(v(lanePosition(frame,star.lane,2+Math.sin(w.time*2+i)*.25)),new T.Quaternion().setFromEuler(new T.Euler(0,w.time,Math.PI/4)),new T.Vector3(scale,scale,scale));this.starMesh.setMatrixAt(i,matrix);
     });this.starMesh.instanceMatrix.needsUpdate=true;
     this.renderer.render(this.scene,this.camera);
   }
